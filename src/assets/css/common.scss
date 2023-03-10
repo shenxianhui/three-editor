@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  // -webkit-overflow-scrolling: touch; /* Safari 平滑滚动 */
+}
+
+html {
+  /* 滚动条样式 */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track-piece {
+    // background: #eee;
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(144, 147, 153, 0.3);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:vertical:hover {
+    background: rgba(144, 147, 153, 0.8);
+  }
+  ::-webkit-scrollbar-thumb:horizontal:hover {
+    background: rgba(144, 147, 153, 0.8);
+  }
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+input {
+  padding: 0; /* 解决 Safari 端内容遮盖问题 */
+  -webkit-appearance: none; /* 去除 Safari 输入框默认样式 */
+  color: #333333;
+  &::-webkit-input-placeholder {
+    color: #c6c6c6;
+  }
+  &:focus {
+    color: #333;
+  }
+
+  /* 隐藏数字输入框右侧箭头 start */
+  &[type='number'] {
+    -moz-appearance: textfield;
+  }
+  &[type='number']::-webkit-inner-spin-button,
+  &[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* 隐藏数字输入框右侧箭头 end */
+}
+
+a,
+a:active,
+a:focus,
+a:hover,
+a:visited {
+  color: #000;
+  text-decoration: none;
+}
+
+table {
+  border-collapse: collapse; /* 合并边框 */
+}
+
+/* 文字溢出后出现省略号 */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
