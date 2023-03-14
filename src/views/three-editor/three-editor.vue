@@ -3,7 +3,7 @@
  * @Author: shenxh
  * @Date: 2023-03-14 15:10:22
  * @LastEditors: shenxh
- * @LastEditTime: 2023-03-14 15:52:40
+ * @LastEditTime: 2023-03-14 16:27:51
 -->
 
 <template>
@@ -51,14 +51,15 @@ export default {
   width: 100%;
   height: 100%;
   .three-editor-wrap {
-    display: flex;
-    flex-direction: column;
     width: 100%;
     height: 100%;
+    .header {
+      flex-shrink: 0;
+    }
     .content-wrap {
       display: flex;
       justify-content: space-between;
-      flex-grow: 1;
+      height: calc(100% - 50px);
       .aside {
         flex-shrink: 0;
       }
