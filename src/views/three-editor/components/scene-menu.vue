@@ -3,7 +3,7 @@
  * @Author: shenxh
  * @Date: 2023-03-14 16:48:37
  * @LastEditors: shenxh
- * @LastEditTime: 2023-03-15 09:31:00
+ * @LastEditTime: 2023-03-15 11:29:23
 -->
 
 <template>
@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import { dragSort } from '@/utils/util'
+
 let num = 0
 
 export default {
@@ -117,10 +119,82 @@ export default {
       })
     },
 
+    // 排序
+    sortSceneList(type, itm, idx) {
+      // 按名称-递增
+      if (type === 'name-asc') {
+        this.sceneList.sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        })
+      }
+      // 按名称-递减
+      if (type === 'name-desc') {
+        this.sceneList.sort((a, b) => {
+          return b.name.localeCompare(a.name)
+        })
+      }
+      // 置顶
+      if (type === 'top') {
+        dragSort(this.sceneList, idx, 0)
+      }
+      // 置底
+      if (type === 'bottom') {
+        dragSort(this.sceneList, idx, this.sceneList.length - 1)
+      }
+      // 向上一级
+      if (type === 'up') {
+        dragSort(this.sceneList, idx, idx - 1)
+      }
+      // 向下一级
+      if (type === 'down') {
+        dragSort(this.sceneList, idx, idx + 1)
+      }
+    },
+
     // 右键场景
     onContextmenu(event, itm, idx) {
       this.$contextmenu({
         items: [
+          {
+            label: '排序',
+            minWidth: 0,
+            divided: true,
+            children: [
+              {
+                label: '按名称',
+                children: [
+                  {
+                    label: '递增',
+                    onClick: () => this.sortSceneList('name-asc', itm, idx),
+                  },
+                  {
+                    label: '递减',
+                    onClick: () => this.sortSceneList('name-desc', itm, idx),
+                  },
+                ],
+              },
+              {
+                label: '置顶',
+                disabled: idx === 0,
+                onClick: () => this.sortSceneList('top', itm, idx),
+              },
+              {
+                label: '置底',
+                disabled: idx >= this.sceneList.length - 1,
+                onClick: () => this.sortSceneList('bottom', itm, idx),
+              },
+              {
+                label: '向上一级',
+                disabled: idx === 0,
+                onClick: () => this.sortSceneList('up', itm, idx),
+              },
+              {
+                label: '向下一级',
+                disabled: idx >= this.sceneList.length - 1,
+                onClick: () => this.sortSceneList('down', itm, idx),
+              },
+            ],
+          },
           {
             label: '重命名',
             onClick: () => this.renameScene(itm, idx),
