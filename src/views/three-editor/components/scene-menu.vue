@@ -3,12 +3,12 @@
  * @Author: shenxh
  * @Date: 2023-03-14 16:48:37
  * @LastEditors: shenxh
- * @LastEditTime: 2023-03-15 11:29:23
+ * @LastEditTime: 2023-03-15 13:53:08
 -->
 
 <template>
   <div class="scene-menu" ref="test">
-    <el-menu class="menu" default-active="0">
+    <el-menu class="menu" default-active="0" @select="selectMenu">
       <div class="menu-item-wrap">
         <el-menu-item
           class="menu-item"
@@ -16,7 +16,7 @@
           :key="index"
           :index="index + ''"
           :title="item.name"
-          @contextmenu.native.prevent="onContextmenu($event, item, index)"
+          @contextmenu.prevent.native="onContextmenu($event, item, index)"
         >
           <div class="menu-item-group">
             <i class="el-icon-menu"></i>
@@ -34,7 +34,8 @@
               v-model="item.name"
               autofocus
               @blur="item.isRename = false"
-              @click.native.stop
+              @keydown.enter.native="item.isRename = false"
+              @click.stop.native
             ></el-input>
           </div>
         </el-menu-item>
@@ -54,7 +55,7 @@
 </template>
 
 <script>
-import { dragSort } from '@/utils/util'
+import { dragSort, sortLikeWin } from '@/utils/util'
 
 let num = 0
 
@@ -73,6 +74,11 @@ export default {
   mounted() {},
   beforeDestroy() {},
   methods: {
+    // 菜单激活回调
+    selectMenu(index, indexPath) {
+      console.log(index, indexPath)
+    },
+
     // 添加场景
     addScene() {
       const scene = {
@@ -82,6 +88,7 @@ export default {
 
       this.sceneList.push(scene)
 
+      this.renameScene(scene, this.sceneList.length - 1)
       this.$emit('add-scene', scene, this.sceneList)
     },
 
@@ -124,13 +131,13 @@ export default {
       // 按名称-递增
       if (type === 'name-asc') {
         this.sceneList.sort((a, b) => {
-          return a.name.localeCompare(b.name)
+          return sortLikeWin(a.name, b.name)
         })
       }
       // 按名称-递减
       if (type === 'name-desc') {
         this.sceneList.sort((a, b) => {
-          return b.name.localeCompare(a.name)
+          return sortLikeWin(b.name, a.name)
         })
       }
       // 置顶
