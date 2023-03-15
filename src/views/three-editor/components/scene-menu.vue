@@ -3,11 +3,11 @@
  * @Author: shenxh
  * @Date: 2023-03-14 16:48:37
  * @LastEditors: shenxh
- * @LastEditTime: 2023-03-14 18:57:01
+ * @LastEditTime: 2023-03-15 09:31:00
 -->
 
 <template>
-  <div class="scene-menu">
+  <div class="scene-menu" ref="test">
     <el-menu class="menu" default-active="0">
       <div class="menu-item-wrap">
         <el-menu-item
@@ -15,11 +15,27 @@
           v-for="(item, index) in sceneList"
           :key="index"
           :index="index + ''"
-          @contextmenu.prevent.native="onContextmenu($event, item, index)"
+          :title="item.name"
+          @contextmenu.native.prevent="onContextmenu($event, item, index)"
         >
           <div class="menu-item-group">
             <i class="el-icon-menu"></i>
-            <span slot="title">{{ item.name }}</span>
+            <span
+              v-if="!item.isRename"
+              class="scene-name text-ellipsis"
+              slot="title"
+            >
+              {{ item.name }}
+            </span>
+            <el-input
+              v-else
+              class="rename-input"
+              :ref="'input' + index"
+              v-model="item.name"
+              autofocus
+              @blur="item.isRename = false"
+              @click.native.stop
+            ></el-input>
           </div>
         </el-menu-item>
       </div>
@@ -58,7 +74,8 @@ export default {
     // 添加场景
     addScene() {
       const scene = {
-        name: `场景${++num}`,
+        name: `场景${++num}`, // 场景名称
+        isRename: false, // 场景重命名
       }
 
       this.sceneList.push(scene)
@@ -70,7 +87,7 @@ export default {
     delScene(itm, idx) {
       const { name = '' } = itm
 
-      this.$confirm(`是否确认删除"${name}"?`, '提示', {
+      this.$confirm(`确认删除"${name}"?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
@@ -87,10 +104,27 @@ export default {
         .catch(() => {})
     },
 
+    // 重命名场景
+    renameScene(itm, idx) {
+      itm.isRename = true
+
+      this.$nextTick(() => {
+        const inputRef = this.$refs['input' + idx]
+
+        if (inputRef && inputRef.length) {
+          inputRef[0].focus()
+        }
+      })
+    },
+
     // 右键场景
     onContextmenu(event, itm, idx) {
       this.$contextmenu({
         items: [
+          {
+            label: '重命名',
+            onClick: () => this.renameScene(itm, idx),
+          },
           {
             label: '删除',
             onClick: () => this.delScene(itm, idx),
@@ -109,7 +143,7 @@ export default {
 <style lang="less" scoped>
 .scene-menu {
   height: 100%;
-  .menu {
+  :deep(.menu) {
     width: 80px;
     height: 100%;
     .menu-item-wrap {
@@ -119,13 +153,29 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+        line-height: normal;
+        padding: 0 10px !important;
         .menu-item-group {
           display: flex;
           flex-direction: column;
           align-items: center;
-          span {
-            line-height: 1;
+          .el-icon-menu {
+            margin: 0;
+          }
+          .scene-name {
+            text-align: center;
+            line-height: normal;
+            width: 60px;
             margin-top: 5px;
+          }
+          .rename-input {
+            height: 20px;
+            margin-top: 5px;
+            .el-input__inner {
+              text-align: center;
+              height: 100%;
+              padding: 0;
+            }
           }
         }
       }
